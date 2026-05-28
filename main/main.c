@@ -23,7 +23,8 @@
 #include "led.h"
 #include "lcd.h"
 #include <stdio.h>
-
+#include "myLvAdapter.h"
+#include "myUI.h"
 
 /**
  * @brief       程序入口
@@ -32,97 +33,24 @@
  */
 void app_main(void)
 {
-    esp_err_t ret;
-    uint8_t x = 0;
+    // esp_err_t ret;
     
-    ret = nvs_flash_init();     /* 初始化NVS */
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
-    {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        ESP_ERROR_CHECK(nvs_flash_init());
-    }
+    // ret = nvs_flash_init();     /* 初始化NVS */
+    // if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    // {
+    //     ESP_ERROR_CHECK(nvs_flash_erase());
+    //     ESP_ERROR_CHECK(nvs_flash_init());
+    // }
 
     led_init();                 /* LED初始化 */
     lcd_init();                 /* LCD屏初始化 */
+    my_lv_adapter_init();     /* LVGL适配器初始化 */
+
+    // 加载我们的极简界面
+    my_simple_ui();
 
     while (1)
     {
-        switch (x)
-        {
-            case 0:
-            {
-                lcd_clear(WHITE);
-                break;
-            }
-            case 1:
-            {
-                lcd_clear(BLACK);
-                break;
-            }
-            case 2:
-            {
-                lcd_clear(BLUE);
-                break;
-            }
-            case 3:
-            {
-                lcd_clear(RED);
-                break;
-            }
-            case 4:
-            {
-                lcd_clear(MAGENTA);
-                break;
-            }
-            case 5:
-            {
-                lcd_clear(GREEN);
-                break;
-            }
-            case 6:
-            {
-                lcd_clear(CYAN);
-                break;
-            }
-            case 7:
-            {
-                lcd_clear(YELLOW);
-                break;
-            }
-            case 8:
-            {
-                lcd_clear(BRRED);
-                break;
-            }
-            case 9:
-            {
-                lcd_clear(GRAY);
-                break;
-            }
-            case 10:
-            {
-                lcd_clear(LGRAY);
-                break;
-            }
-            case 11:
-            {
-                lcd_clear(BROWN);
-                break;
-            }
-        }
-
-        lcd_show_string(10, 40,  240, 32, 32, "ESP32-P4", RED);
-        lcd_show_string(10, 80,  240, 24, 24, "MIPILCD TEST", RED);
-        lcd_show_string(10, 110, 240, 16, 16, "ATOM@ALIENTEK", RED);
-        x++;
-
-        if (x == 12)
-        {
-            x = 0;
-        }
-
-        LED0_TOGGLE();
-
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }

@@ -769,6 +769,7 @@ esp_lcd_panel_handle_t mipi_lcd_init(void)
             .vsync_pulse_width = mipidev.vsw,                   /* 垂直同步宽度,单位:行数 */
             .vsync_front_porch = mipidev.vfp,                   /* 垂直前廊,帧结束和下一个vsync之间的无效行数 */
         },
+        .flags.use_dma2d=1,
     };
     ESP_ERROR_CHECK(esp_lcd_new_panel_dpi(mipi_dsi_bus, &dpi_config, &mipi_dpi_panel));     /* 为MIPI DSI DPI接口创建LCD控制句柄 */
     ESP_ERROR_CHECK(esp_lcd_panel_init(mipi_dpi_panel));                                    /* 初始化MIPILCD */

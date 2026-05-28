@@ -74,20 +74,29 @@ void lcd_init(void)
     LCD_BL(1);      /* 打开背光 */
 }
 
+IRAM_ATTR void lcd_clear(uint16_t color)
+{
+    uint16_t *buffer = (uint16_t *)lcd_buffer[buffer_sw];
+    for (uint32_t i = 0; i < lcddev.width * lcddev.height; i++)
+    {
+        buffer[i] = color;
+    }
+}
+
 /**
  * @brief       清屏
  * @param       color :清屏颜色
  * @retval      无
  */
-IRAM_ATTR void lcd_clear(uint16_t color)
+IRAM_ATTR void lcd_set(void)
 {
     uint16_t *buffer = (uint16_t *)lcd_buffer[buffer_sw];  /* 将 void* 转换为 uint16_t* */
 
-    /* 制定缓存区填充颜色值 */
-    for (uint32_t i = 0; i < lcddev.width * lcddev.height; i++)
-    {
-        buffer[i] = color;
-    }
+    // /* 制定缓存区填充颜色值 */
+    // for (uint32_t i = 0; i < lcddev.width * lcddev.height; i++)
+    // {
+    //     buffer[i] = color;
+    // }
 
     esp_lcd_panel_draw_bitmap(lcddev.lcd_panel_handle, 0, 0, lcddev.width, lcddev.height, buffer);
     /* 清除传输完成标志 */
@@ -111,7 +120,13 @@ IRAM_ATTR void lcd_clear(uint16_t color)
  */
 void lcd_draw_point(uint16_t x, uint16_t y, uint16_t color)
 {
-    esp_lcd_panel_draw_bitmap(lcddev.lcd_panel_handle, x, y, x + 1, y + 1, (uint16_t *)&color);
+    //esp_lcd_panel_draw_bitmap(lcddev.lcd_panel_handle, x, y, x + 1, y + 1, (uint16_t *)&color);
+    // 越界判断
+    if (x >= lcddev.width || y >= lcddev.height) return;
+
+    // 直接写后台双缓冲内存（最快！）
+    uint16_t *fb = (uint16_t *)lcd_buffer[buffer_sw];
+    fb[y * lcddev.width + x] = color;
 }
 
 /**
